@@ -1,42 +1,90 @@
 body {
-    display: flex;
-    flex-direction:column;
-    align-items: center;
-    font-family: verdana;
-  }
-  
-  input,button {
-    height: 1.5rem;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  form > * {
-    margin: 1rem;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: verdana;
+}
+
+input,
+button {
+  height: 1.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form > * {
+  margin: 1rem;
+}
 
 h1 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 nav {
-    display:flex;
-    justify-content: space-around;
-    width: 100%;
-    background-color: white;
-    padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  background-color: white;
+  padding: 10px;
 }
 
 nav a {
-    color: black;
-    transition: color 0.4s ease;
+  color: black;
+  transition: color 0.4s ease;
+  justify-content: space-around;
 }
 
-nav button{
-    margin-left: auto;
-    cursor: pointer;
+nav button {
+  margin-left: auto;
+  cursor: pointer;
 }
 
+a:link {
+  color: green;
+}
+
+a:visited {
+  color: green;
+}
+
+a:hover {
+  color: red;
+}
+
+a:active {
+  color: yellow;
+}
+
+.login-form .auth-button::before {
+  content: "Login";
+}
+
+.register-form .auth-button::before {
+  content: "Register";
+}
+
+.auth-button {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.books-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.book-item {
+  width: 25%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 700px) {
+  .book-item {
+    width: 100%;
+  }
+}
