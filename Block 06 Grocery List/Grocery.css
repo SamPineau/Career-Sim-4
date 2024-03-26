@@ -1,0 +1,22 @@
+h1{
+    color:blue
+    
+}
+    h2{
+border-style: dashed;
+background-color: aquamarine;
+border: gold 
+border-width; 
+    }
+        h3{
+border-style: double;
+background-color: beige;
+border: gold
+border-width;
+        }
+li{
+    border-style: double;
+    background-color: beige;
+    border: gold
+    border-width;   
+}

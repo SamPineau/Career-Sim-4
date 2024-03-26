@@ -1,0 +1,47 @@
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: lightgray;
+  border: 2px solid black;
+  padding: 10px;
+  margin: 5px;
+}
+
+.container h2 {
+  border: 2px solid black;
+  padding: 10px;
+  margin: 5px;
+}
+
+
+
+.title {
+  text-align: center;
+
+}
+
+.type {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  
+  
+}
+
+
+#player-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#player-details {
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .container h2, .type h3 {
+    width: 100%;
+  }
+}

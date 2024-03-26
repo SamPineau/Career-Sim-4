@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Book Buddy</title>
+    <link rel='stylesheet' href='styles.css' />
+  </head>
+<body>
+  <div id="root"></div>
+</body>
+<!-- This setup is not suitable for production. -->
+<!-- Only use it in development! -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.7.0/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react?dev",
+    "react-dom/client": "https://esm.sh/react-dom/client?dev",
+    "react-router-dom": "https://esm.sh/react-router-dom?dev"
+  }
+}
+</script>
+<script type="text/babel" data-type="module">
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import {
+  HashRouter,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useParams,
+  useLocation
+} from 'react-router-dom';
+const { useState, useEffect } = React;
+
+const Home = ()=> {
+  return (
+    <div>
+      <h1>Welcome to Book Buddy</h1>
+    </div>
+  );
+}
+const Books = ({ books, reserve, reservations, unreserve })=> {
+  return (
+    <ul>
+      {
+        books.map( book => {
+          const _reservations = reservations.filter( reservation => reservation.title === book.title);
+          return (
+            <li key={ book.id }>
+              <h1>{ book.title }</h1>
+              {
+                _reservations.length ? <button onClick={ ()=> unreserve(_reservations[0])}>-</button>: null
+              }
+              <button onClick={ ()=> reserve(book)}>+</button>
+              You have reserved this book { _reservations.length } time
+            </li>
+          );
+        })
+      }
+    </ul>
+  );
+};
+
+const AuthForm = ({ submit })=> {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const _submit = ev => {
+    ev.preventDefault();
+    submit({ email, password});
+  }
+  return (
+    <form onSubmit={ _submit }>
+      <input
+        placeholder='email'
+        value={ email }
+        onChange={ ev => setEmail(ev.target.value) }
+      />
+      <input
+        placeholder='password'
+        value={ password }
+        onChange={ ev => setPassword(ev.target.value) }
+      />
+      <button>Submit</button>
+    </form>
+  );
+};
+
+const Login = ({ login })=> {
+  return (
+    <div>
+      <h2>Login</h2>
+      <AuthForm submit={ login }/>
+    </div>
+  );
+};
+
+const Register = ({ register })=> {
+  return (
+    <div>
+      <h2>Register</h2>
+      <AuthForm submit={ register }/>
+    </div>
+  );
+};
+
+
+function App() {
+  const API = 'https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api';
+  
+  const [books, setBooks] = useState([]);
+  const [reservations, setReservations] = useState([]);
+  const [auth, setAuth] = useState({});
+
+  useEffect(()=> {
+    if(window.localStorage.getItem('token')){
+      attemptLoginWithToken();
+    }
+  }, []);
+  
+  const fetchReservations = async()=> {
+    const response = await fetch(
+      `${API}/reservations`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${window.localStorage.getItem('token')}`
+        }
+      }
+    );
+    const json = await response.json();
+    setReservations(json.reservation);
+  }
+
+  useEffect(()=> {
+    if(auth.id){
+      fetchReservations();
+    }
+  }, [auth]);
+
+  const attemptLoginWithToken = async()=> {
+    const response = await fetch(
+      `${API}/users/me`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${window.localStorage.getItem('token')}`
+        }
+      }
+    );
+    const json = await response.json();
+    setAuth(json);
+  }
+
+  const register = async(credentials)=> {
+    const response = await fetch(
+      `${API}/users/register`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      }
+    );
+    if(response.status === 200){
+      const json = await response.json();
+      window.localStorage.setItem('token', json.token);
+      attemptLoginWithToken();
+    }
+    else {
+      const json = await response.json();
+      console.log(json);
+    }
+  };
+
+  const reserve = async(book)=> {
+    const response = await fetch(
+      `${API}/books/${book.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${window.localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ available: false })
+      }
+    );
+    fetchReservations();
+  }
+
+  const unreserve = async(reservation)=> {
+    const response = await fetch(
+      `${API}/reservations/${reservation.id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${window.localStorage.getItem('token')}`
+        }
+      }
+    );
+    fetchReservations();
+  }
+
+  const login = async(credentials)=> {
+    const response = await fetch(
+      `${API}/users/login`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      }
+    );
+    if(response.status === 200){
+      const json = await response.json();
+      window.localStorage.setItem('token', json.token, json.token);
+      attemptLoginWithToken();
+    }
+    else {
+      const json = await response.json();
+      console.log(json);
+    }
+  };
+
+  useEffect(()=> {
+    const fetchBooks = async()=> {
+      const response = await fetch(`${API}/books`);
+      const json = await response.json();
+      setBooks(json.books);
+    };
+    fetchBooks();
+  }, []);
+
+  const logout = ()=> {
+    window.localStorage.removeItem('token');
+    setAuth({});
+  };
+  
+  return (
+    <div>
+      <h1>Book Buddy ({ books.length })</h1>
+      <nav>
+        <Link to='/'>Home</Link>
+        <Link to='/books'>Books</Link>
+        {
+          auth.id ? <button onClick={ logout }>Welcome {auth.email } Click to logout</button>: null
+        }
+      </nav>
+      {
+        !auth.id && (
+          <>
+          <Login login={ login }/>
+          <Register register={ register }/>
+          </>
+        )
+      }
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Home />
+          }
+        />
+        <Route
+          path='/books'
+          element={
+            <Books
+              books={ books }
+              reserve={ reserve }
+              unreserve={ unreserve }
+              reservations= { reservations }
+            />
+          }
+        />
+      </Routes>
+    </div>
+  );
+}
+
+const root = createRoot(document.getElementById('root'));
+root.render(
+  <HashRouter>
+    <App />
+  </HashRouter>
+);
+</script>
+</html>

@@ -1,0 +1,44 @@
+h1{
+     text-align: center;
+     text-transform: uppercase;
+     text-decoration: underline;
+}
+
+h2{
+    text-align: center;
+    border: solid; 
+    background: rgb(191, 184, 184)
+}
+section{
+    display: flex;
+    flex-direction: row;    
+    align-items: center;
+    list-style-image: .1em;
+
+
+}
+.name{
+    display: flex;
+    align-items: flex-end;
+}
+
+#first{
+    display: flex;
+    flex-direction: row;
+   
+ 
+    
+}
+
+#second{
+    display: flex;
+    flex-direction: row;
+    
+    
+}
+
+#third{
+    display: flex;
+    flex-direction: row;
+    
+}

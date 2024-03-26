@@ -1,0 +1,39 @@
+* {
+     border: 1px solid green; 
+
+}
+
+
+body {
+    padding-bottom: 50vh;
+}
+
+/* This media query means that these 
+rules will only apply when the width
+of the viewport is at least 720px.
+We call the 720px a breakpoint!
+*/
+
+
+@media (min-width: 720pc) {
+    main {
+        width: 80ch;
+        margin: 0 auto;
+    }
+}
+button.fancy {
+    width: 50ch;
+    height: 2rem;
+    padding: 0.5rem;
+    background: red;
+    color: white;
+    text-transform: uppercase;
+    border: 0;
+}
+button.fancy:hover {
+    background: rgb(224, 9, 9);
+    cursor: pointer;
+}
+button.fancy.active{
+    background: rgb(162, 15, 15);
+}
